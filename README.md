@@ -9,7 +9,7 @@
 
 ![screenshot](./public/screenshot.png)
 
-[Live Demo](https://image-uploader-challenge-six.vercel.app/)
+[Live Demo](https://my-unsplash-devchallenges.vercel.app/)
 
 ### Built With
 
