@@ -8,6 +8,7 @@ let selectedIndex = ref()
 let password = ref('password')
 let passwordInput = ref('')
 let searchInput = ref('')
+let selectedImage = ref('')
 
 let images = ref([
   { url: 'https://picsum.photos/382/306', label: 'Random Image 1', active: false },
@@ -48,6 +49,7 @@ type ModalDialog = HTMLDialogElement | null
 const openButton: Ref<HTMLButtonElement | null> = ref(null)
 const modal: Ref<ModalDialog> = ref(null)
 const modalDelete: Ref<ModalDialog> = ref(null)
+const modalImage: Ref<ModalDialog> = ref(null)
 
 const openModal = () => {
   if (modal.value) {
@@ -69,6 +71,16 @@ const closeModal = () => {
   if (modalDelete.value) {
     modalDelete.value.close()
   }
+  if (modalImage.value) {
+    modalImage.value.close()
+    selectedImage.value = ''
+  }
+}
+
+const handleClick = (imageUrl: string) => {
+  console.log('click')
+  selectedImage.value = imageUrl
+  modalImage.value?.showModal()
 }
 </script>
 
@@ -77,6 +89,8 @@ const closeModal = () => {
     <ul>
       <li>
         <img src="/my_unsplash_logo.svg" alt="" />
+      </li>
+      <li>
         <div class="input-icons">
           <v-icon name="hi-search" />
           <input type="text" placeholder="Search by name" v-model="searchInput" />
@@ -141,10 +155,20 @@ const closeModal = () => {
         @mouseover="image.active = true"
         @mouseleave="image.active = false"
       >
-        <img :src="image.url" alt="" :class="[image.active ? 'galleryHover' : '']" />
+        <img
+          :src="image.url"
+          alt=""
+          :class="[image.active ? 'galleryHover' : '']"
+          @click="handleClick(image.url)"
+        />
         <button v-if="image.active" @click="openDeleteModal(index)">delete</button>
         <span v-if="image.active">{{ image.label }}</span>
       </div>
+
+      <dialog data-modal ref="modalImage" class="modal lessPadding" @close="closeModal">
+        <button @click="closeModal" class="closeBtn">X</button>
+        <img class="full-width" :src="selectedImage" alt="" />
+      </dialog>
     </div>
   </main>
 </template>
@@ -169,7 +193,9 @@ body {
   border-radius: 16px;
   margin-bottom: 1rem;
   transition: 0.3s ease all;
+  cursor: pointer;
 }
+
 .galleryHover {
   filter: brightness(40%);
   cursor: pointer;
@@ -364,5 +390,40 @@ nav {
 
 .input-icons svg {
   color: #dbdbdb;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.closeBtn {
+  border: transparent;
+  cursor: pointer;
+  padding: 5px;
+  float: right;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 500px) {
+  body {
+    width: 95%;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .gallery {
+    columns: 2;
+  }
+
+  .modal {
+    width: 100%;
+  }
+
+  .lessPadding {
+    padding: 0.8rem;
+  }
 }
 </style>
